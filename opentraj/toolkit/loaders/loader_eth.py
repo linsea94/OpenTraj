@@ -1,8 +1,12 @@
 # Author: Javad Amirian
 # Email: amiryan.j@gmail.com
 
+from http.cookiejar import LoadError
 import numpy as np
 import pandas as pd
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'../'))
+
 from toolkit.core.trajdataset import TrajDataset
 
 
@@ -11,8 +15,10 @@ def load_eth(path, **kwargs):
 
     csv_columns = ["frame_id", "agent_id", "pos_x", "pos_z", "pos_y", "vel_x", "vel_z", "vel_y"]
     # read from csv => fill traj table
-    raw_dataset = pd.read_csv(path, sep=r"\s+", header=None, names=csv_columns)
-
+    try:
+        raw_dataset = pd.read_csv(path, sep=r"\s+", header=None, names=csv_columns)
+    except:
+        raise LoadError("load error")
     traj_dataset.title = kwargs.get('title', "no_title")
 
     # copy columns
@@ -24,7 +30,6 @@ def load_eth(path, **kwargs):
                      "pos_x", "pos_y",
                      "vel_x", "vel_y"
                      ]]
-
     traj_dataset.data["scene_id"] = kwargs.get('scene_id', 0)
     traj_dataset.data["label"] = "pedestrian"
 
