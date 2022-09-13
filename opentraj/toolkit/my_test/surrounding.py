@@ -1,10 +1,13 @@
+import sys, os
+# sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'../'))
+# print(sys.path)
 import pandas as pd
 import numpy as np
 import csv
 import math
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
-df = pd.read_csv('./8415.csv')
+df = pd.read_csv('/home/amr-server/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/8415.csv')
 
 class pt:
   def __init__(self, x, y):
@@ -24,18 +27,27 @@ class pt:
     return dir
 
 num_of_pieces = 72
-max_dist = 8
-target = df.iloc[0]
+max_dist = 10
+target_id = 4
+target = df.iloc[target_id]
 target_pt = pt(target[2],target[3])
-other = df.iloc[10]
-other_pt = pt(other[2],other[3])
-dist = pt.distance(target_pt, other_pt)
-dir = pt.direction(target_pt, other_pt, num_of_pieces)
+# plt.scatter(target[2], target[3])
+# plt.text(target[2],target[3], target_id)
+# other = df.iloc[10]
+# other_pt = pt(other[2],other[3])
+# dist = pt.distance(target_pt, other_pt)
+# dir = pt.direction(target_pt, other_pt, num_of_pieces)
 
 surrounding = np.ones(num_of_pieces)
-for i in range(1,len(df)):
+for i in range(0,len(df)):
+  if i == target_id:
+    continue
+  else:
+    pass
   other = df.iloc[i]
   other_pt = pt(other[2],other[3])
+  # plt.scatter(other[2],other[3])
+  # plt.text(other[2],other[3], i)
   dist = pt.distance(target_pt, other_pt)
   dist = np.round(dist / max_dist, 4)
   if dist > 1:
@@ -48,9 +60,10 @@ for i in range(1,len(df)):
 
 cmap = plt.get_cmap("Reds")
 color = cmap(np.array(np.abs(surrounding-1)))
-plt.pie(np.ones(num_of_pieces),
+img = plt.pie(np.ones(num_of_pieces),
         explode = surrounding,
         labels = surrounding,
         colors = color,
         textprops = {"fontsize" : 10})
 plt.show()
+# plt.savefig('/home/amr-server/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/surrounding.jpg')
