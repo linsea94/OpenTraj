@@ -4,14 +4,16 @@ import csv
 import math
 import matplotlib.pyplot as plt
 
-origin_data_location = '/home/amr-server/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/ETH.csv'
+origin_data_location = '/home/amr-server/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/origin_data/ETH.csv'
 df = pd.read_csv(origin_data_location)
+
+split_frame_num = 6
 
 FIRST=True
 sample=[]
 sample_cnt=0
 target=[]
-save_folder = './split_data/'
+save_folder = '../split_data/'
 file_name = 0
 
 for i in range(len(df)):
@@ -33,7 +35,7 @@ for i in range(len(df)):
     frame = new_frame
     
     #reset
-    while sample_cnt==15:
+    while sample_cnt == split_frame_num:
       file_name += 1
 
       others_data = sample
