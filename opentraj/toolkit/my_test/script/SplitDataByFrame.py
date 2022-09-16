@@ -1,20 +1,17 @@
 import pandas as pd
-import numpy as np
-import csv
-import math
-import matplotlib.pyplot as plt
+import os 
+home = os.path.expanduser("~")
 
-origin_data_location = '/home/amr-server/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/origin_data/ETH.csv'
-df = pd.read_csv(origin_data_location)
-
+origin_data = home + '/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/origin_data/ETH.csv'
+save_folder = home +'/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/output/'
 split_frame_num = 6
 
+
 FIRST=True
-sample=[]
-sample_cnt=0
-target=[]
-save_folder = '../split_data/'
-file_name = 0
+sample, target =[], []
+sample_cnt, file_name = 0, 0
+
+df = pd.read_csv(origin_data)
 
 for i in range(len(df)):
   lst = df.iloc[i]
@@ -43,8 +40,8 @@ for i in range(len(df)):
       sample_cnt = 0
       df_others = pd.DataFrame(others_data)
       df_others.columns = ['frame_id', 'agent_id', 'pos_x', 'pos_y', 'vel_x', 'vel_y', 'scene_id', 'label', 'timestamp']
-      with open(save_folder+ '{0:03}'.format(file_name)+'.csv', mode= 'a') as f:
-        df_others.to_csv(f, header = True, index = False)
+      f = save_folder+ '{0:03}'.format(file_name)+'.csv'
+      df_others.to_csv(f, header = True, index = False)
       FIRST = True
       sample.append(lst)
       continue

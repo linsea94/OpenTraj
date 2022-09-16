@@ -7,9 +7,9 @@ import AngularGrid
 from glob import glob
 import os
 
-pkg_location = "/home/amr-server/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/"
-folder = pkg_location + "split_data/raw/"
-save_folder = pkg_location + "split_data/output/"
+home = os.path.expanduser("~")
+pkg_location = home + "/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/output/"
+folder = pkg_location + "ori/"
 output_frame_num = 5
 num_of_pieces = 72
 max_dist = 8
@@ -79,6 +79,7 @@ for file in glob(os.path.join(folder,"*.csv")):
       target_output.columns = cols
       if len(target_output) != output_frame_num:
         print("file", file_name, "target:", target, "doesn't have the complete trajactory!")
+        continue
     except:
       print("file", file_name, "target:", target, "doesn't have the complete trajactory!")
       continue
@@ -94,9 +95,9 @@ for file in glob(os.path.join(folder,"*.csv")):
       ag = pd.DataFrame(ag)
       print("file", file_name, "target:", target, "doesn't have the others!")
 
-    target_state.to_csv(save_folder + str(file_name) + '_' + str(target) +'.csv', header = True, index = False)
-    target_output.to_csv(save_folder + str(file_name) + '_' + str(target) +'_OP.csv', header = True, index = False)
-    ag.to_csv(save_folder + str(file_name) + '_' + str(target) +'_AG.csv', header = True, index = False)
+    target_state.to_csv(pkg_location + 'train_x/' + str(file_name) + '_' + str(target) +'.csv', header = True, index = False)
+    target_output.to_csv(pkg_location + 'train_y/' + str(file_name) + '_' + str(target) +'.csv', header = True, index = False)
+    ag.to_csv(pkg_location + 'train_ag/' + str(file_name) + '_' + str(target) +'.csv', header = True, index = False)
     cnt+=1
 
 print(cnt)
