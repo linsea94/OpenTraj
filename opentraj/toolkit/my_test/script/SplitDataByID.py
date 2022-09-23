@@ -8,8 +8,8 @@ from glob import glob
 import os
 
 home = os.path.expanduser("~")
-pkg_location = home + "/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/output/"
-folder = pkg_location + "ori/"
+pkg_location = home + "/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/output/ETH/"
+folder = pkg_location + "SplitByTime/"
 output_frame_num = 5
 num_of_pieces = 72
 max_dist = 8
