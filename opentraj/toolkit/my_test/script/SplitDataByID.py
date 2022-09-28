@@ -1,63 +1,21 @@
 import pandas as pd
 import numpy as np
-import csv
-import math
+import os
+import cv2
 import matplotlib.pyplot as plt
 import AngularGrid
+from SplitData import *
 from glob import glob
-import os
 
 home = os.path.expanduser("~")
-pkg_location = home + "/motion_ws/src/OpenTraj/opentraj/toolkit/my_test/output/ETH/"
+pkg_location = home + "/motion_ws/src/motion_prediction/data/ETH"
 folder = pkg_location + "SplitByTime/"
+h = (np.loadtxt(pkg_location + "/H.txt"))
+img = cv2.imread(pkg_location + "/map.png")
+img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 output_frame_num = 5
 num_of_pieces = 72
 max_dist = 8
-
-def get_ped_info(ped_info):
-
-  ped_id = ped_info[1]
-  ped_frame = ped_info[0]
-  
-  return ped_frame, ped_id
-
-def get_target_set(df):
-  first_frame = df.iloc[0]['frame_id']
-  target_set = []
-
-  for i in range(len(df)):
-    ped_info = df.iloc[i]
-    ped_frame, ped_id = get_ped_info(ped_info)
-    if ped_frame != first_frame:
-      break
-    else:
-      target_set.append(ped_id)
-
-  return target_set
-
-def split_data(df, target):
-    FIRST = True
-    target_state=[]
-    target_output=[]
-    other_state=[]
-    first_frame = df.iloc[0]['frame_id']
-
-    for i in range(len(df)):
-      ped_info = df.iloc[i]
-      ped_frame, ped_id = get_ped_info(ped_info)
-      if ped_id == target:
-        if FIRST:
-          FIRST = False
-          target_state.append(ped_info)
-        else:
-          target_output.append(ped_info)
-
-      elif ped_frame == first_frame:
-        other_state.append(ped_info)
-      else:
-        pass
-    return target_state, target_output, other_state
-
 cnt = 0
 
 for file in glob(os.path.join(folder,"*.csv")):
@@ -74,6 +32,10 @@ for file in glob(os.path.join(folder,"*.csv")):
     target_state = pd.DataFrame(target_state)
     target_state.columns = cols
 
+    target_center_pt = np.array([target_state['pos_x'], target_state['pos_y']]).reshape(1,2)
+    map_feature = get_map_feature_ETH(target_center_pt, img, h)                                #only for ETH dataset!
+    map_feature = pd.DataFrame(map_feature)
+    
     try:
       target_output = pd.DataFrame(target_output)
       target_output.columns = cols
@@ -96,6 +58,7 @@ for file in glob(os.path.join(folder,"*.csv")):
       print("file", file_name, "target:", target, "doesn't have the others!")
 
     target_state.to_csv(pkg_location + 'train_x/' + str(file_name) + '_' + str(target) +'.csv', header = True, index = False)
+    map_feature.to_csv(pkg_location + 'map_info/' + str(file_name) + '_' + str(target) +'.csv', header = False, index = False)
     target_output.to_csv(pkg_location + 'train_y/' + str(file_name) + '_' + str(target) +'.csv', header = True, index = False)
     ag.to_csv(pkg_location + 'train_ag/' + str(file_name) + '_' + str(target) +'.csv', header = True, index = False)
     cnt+=1
